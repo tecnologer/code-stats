@@ -1,6 +1,6 @@
 # Code Stats
 
-Collects the code statistics of a given directory.
+Collects the code statistics of a given directory, and could compare with the previous stats.
 
 ## Pre-requisites
 
