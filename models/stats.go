@@ -18,3 +18,28 @@ type Stats struct {
 }
 
 type Files struct{}
+
+func (s *Stats) ValueOf(statType StatType) int64 {
+	switch statType {
+	case StatTypeBytes:
+		return s.Bytes
+	case StatTypeCodeBytes:
+		return s.CodeBytes
+	case StatTypeLines:
+		return s.Lines
+	case StatTypeCode:
+		return s.Code
+	case StatTypeComment:
+		return s.Comment
+	case StatTypeBlank:
+		return s.Blank
+	case StatTypeComplexity:
+		return s.Complexity
+	case StatTypeCount:
+		return s.Count
+	case StatTypeWeightedComplexity:
+		return s.WeightedComplexity
+	default:
+		return 0
+	}
+}

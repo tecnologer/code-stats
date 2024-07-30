@@ -24,7 +24,8 @@ var (
 	imitDir          = flag.String("omit-dir", ".idea,vendor,.stats", "Directories to omit from the stats")
 	onlyCompareInput = flag.Bool("only-compare-input", false, "Only compare the input files, do not calculate the current stats")
 	drawChart        = flag.Bool("draw-chart", false, "Draw chart")
-	languages        = flag.String("languages", "go", "Languages to include in the chart, require at least one and --draw-chart")
+	languages        = flag.String("languages", "", "Languages to include in the chart, require at least one and --draw-chart")
+	statName         = flag.String("stat-name", "code", "Name of the stat, accepted values: "+models.AllStatTypesString())
 	showVersion      = flag.Bool("version", false, "Show version")
 	version          string
 )
@@ -59,9 +60,17 @@ func main() {
 	fmt.Println("Stats collected successfully")
 
 	if *drawChart {
-		langs := strings.Split(*languages, ",")
+		var langs []string
+		if *languages != "" {
+			langs = strings.Split(*languages, ",")
+		}
 
-		err = chart.Draw(stats, langs...)
+		statType := models.StatTypeFromString(*statName)
+		if !statType.IsValid() {
+			log.Fatalf("Invalid stat name: %s. The valid stat names are: %s", *statName, models.AllStatTypesString())
+		}
+
+		err = chart.Draw(stats, statType, langs...)
 		if err != nil {
 			log.Fatal(err)
 		}

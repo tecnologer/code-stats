@@ -10,9 +10,7 @@ import (
 	"tecnologer.net/code-stats/models"
 )
 
-func Draw(stats *models.StatsCollection, languages ...string) error {
-	//bars := make([]chart.Value, 0, stats.Len())
-
+func Draw(stats *models.StatsCollection, statType models.StatType, languages ...string) error {
 	graph := chart.Chart{
 		XAxis: chart.XAxis{
 			Name:           "Date",
@@ -36,12 +34,12 @@ func Draw(stats *models.StatsCollection, languages ...string) error {
 
 			serie, ok := series[stat.Name]
 			if !ok {
-				serie = createSeriePerLanguage(languageStats, stat.Name)
+				serie = createSeriePerLanguage(languageStats, statType, stat.Name)
 				serie.XValues = []time.Time{key}
 				series[stat.Name] = serie
 			} else {
 				serie.XValues = append(serie.XValues, key)
-				serie.YValues = append(serie.YValues, float64(stat.Code))
+				serie.YValues = append(serie.YValues, float64(stat.ValueOf(statType)))
 			}
 		}
 	}
@@ -54,10 +52,14 @@ func Draw(stats *models.StatsCollection, languages ...string) error {
 		chart.Legend(&graph),
 	}
 
-	f, _ := os.Create(time.Now().UTC().Format(time.DateOnly) + "_stats.png")
+	f, err := os.Create(time.Now().UTC().Format(time.DateOnly) + "_stats.png")
+	if err != nil {
+		return fmt.Errorf("failed to create image file: %w", err)
+	}
+
 	defer f.Close()
 
-	err := graph.Render(chart.PNG, f)
+	err = graph.Render(chart.PNG, f)
 	if err != nil {
 		return fmt.Errorf("failed to render chart: %w", err)
 	}
@@ -79,7 +81,7 @@ func isInLanguageList(language string, list []string) bool {
 	return false
 }
 
-func createSeriePerLanguage(stats []*models.Stats, language string) *chart.TimeSeries {
+func createSeriePerLanguage(stats []*models.Stats, statType models.StatType, language string) *chart.TimeSeries {
 	serie := &chart.TimeSeries{
 		Name:    language,
 		YValues: []float64{},
@@ -87,7 +89,7 @@ func createSeriePerLanguage(stats []*models.Stats, language string) *chart.TimeS
 
 	for _, st := range stats {
 		if strings.EqualFold(st.Name, language) {
-			serie.YValues = append(serie.YValues, float64(st.Code))
+			serie.YValues = append(serie.YValues, float64(st.ValueOf(statType)))
 			break
 		}
 	}
