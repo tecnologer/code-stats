@@ -22,7 +22,7 @@ const statsFolder = ".stats"
 var (
 	inputFilePaths   = flag.String("input", ".stats", "Path to the input file, separated by commas, could be used with stdin")
 	imitDir          = flag.String("omit-dir", ".idea,vendor,.stats", "Directories to omit from the stats")
-	onlyCompareInput = flag.Bool("only-compare-input", false, "Only compare the input files")
+	onlyCompareInput = flag.Bool("only-compare-input", false, "Only compare the input files, do not calculate the current stats")
 	drawChart        = flag.Bool("draw-chart", false, "Draw chart")
 	languages        = flag.String("languages", "go", "Languages to include in the chart, require at least one and --draw-chart")
 	showVersion      = flag.Bool("version", false, "Show version")
@@ -34,6 +34,7 @@ func main() {
 
 	if *showVersion {
 		fmt.Println(version)
+
 		os.Exit(0)
 	}
 
