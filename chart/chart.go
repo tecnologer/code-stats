@@ -37,9 +37,10 @@ func Draw(stats *models.StatsCollection, languages ...string) error {
 			serie, ok := series[stat.Name]
 			if !ok {
 				serie = createSeriePerLanguage(languageStats, stat.Name)
-				serie.XValues = stats.Keys()
+				serie.XValues = []time.Time{key}
 				series[stat.Name] = serie
 			} else {
+				serie.XValues = append(serie.XValues, key)
 				serie.YValues = append(serie.YValues, float64(stat.Code))
 			}
 		}
@@ -49,18 +50,9 @@ func Draw(stats *models.StatsCollection, languages ...string) error {
 		graph.Series = append(graph.Series, serie)
 	}
 
-	//graph := chart.BarChart{
-	//	Title: "Code stats",
-	//	Background: chart.Style{
-	//		Padding: chart.Box{
-	//			Top: 40,
-	//		},
-	//	},
-	//	Height:   512,
-	//	Width:    512,
-	//	BarWidth: 60,
-	//	Bars:     bars,
-	//}
+	graph.Elements = []chart.Renderable{
+		chart.Legend(&graph),
+	}
 
 	f, _ := os.Create(time.Now().UTC().Format(time.DateOnly) + "_stats.png")
 	defer f.Close()
