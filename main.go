@@ -110,7 +110,7 @@ func writeFile(content []byte) error {
 		return fmt.Errorf("failed to create stats folder: %w", err)
 	}
 
-	fileName := fmt.Sprintf("%s/%s.json", statsFolder, time.Now().UTC().Format(time.DateOnly))
+	fileName := fmt.Sprintf("%s/%s.json", statsFolder, time.Now().UTC().Format("200601021_150405"))
 
 	err = os.WriteFile(fileName, content, 0644)
 	if err != nil {
