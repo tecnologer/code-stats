@@ -1,15 +1,20 @@
 # Code Stats
 
 Collects the code statistics of a given directory, and could compare with the previous stats.
-
-## Pre-requisites
-
-- `scc` in the PATH, to install it run the following command:
-  ```shell
-  go install github.com/boyter/scc/v3@latest
-  ```
   
 ## Usage
+
+- Collect the code stats of the current directory and store it in `.stats` directory.
+  ```shell
+  code-stats
+  ```
+  
+- Compare the previous code stats of the current directory stored in `.stats` directory and draw a chart for `go` and `java` languages.
+  ```shell
+  code-stats --draw-chart --languages go,java --only-compare-input
+  ```
+  
+### Flags
 
 ```text
    --verbose                                                    enable verbose output. (default: false)
@@ -24,18 +29,6 @@ Collects the code statistics of a given directory, and could compare with the pr
    --help, -h                                                   show help
    --version, -v                                                print the version
 ```
-
-## Examples
-
-- Collect the code stats of the current directory and store it in `.stats` directory.
-  ```shell
-  code-stats
-  ```
-  
-- Compare the previous code stats of the current directory stored in `.stats` directory and draw a chart for `go` and `java` languages.
-  ```shell
-  code-stats --draw-chart --languages go,java --only-compare-input
-  ```
 
 ### Chart output
 
