@@ -104,7 +104,7 @@ func readJSONContentFromStdin() (*models.StatsCollection, error) {
 }
 
 func ExtractCurrent(omitDirs []string) (*models.StatsCollection, error) {
-	output, err := scc.Run(omitDirs...)
+	output, err := scc.Process(omitDirs...)
 	if err != nil {
 		log.Fatal(err)
 	}

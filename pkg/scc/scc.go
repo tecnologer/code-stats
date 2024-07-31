@@ -2,15 +2,41 @@ package scc
 
 import (
 	"fmt"
-	"os/exec"
-	"strings"
+	"os"
+	"path"
+
+	"github.com/boyter/scc/processor"
+	"tecnologer.net/code-stats/pkg/file"
+	"tecnologer.net/code-stats/ui"
 )
 
-func Run(omitDir ...string) ([]byte, error) {
-	output, err := exec.Command("scc", "-f", "json", "--exclude-dir", strings.Join(omitDir, ","), "./").Output() //nolint:gosec
-	if err != nil {
-		return nil, fmt.Errorf("failed to run scc: %w", err)
+func Process(omitDir ...string) ([]byte, error) {
+	processor.FileOutput = path.Join(os.TempDir(), "updated_stats.json")
+
+	processor.DirFilePaths = []string{}
+	if processor.ConfigureLimits != nil {
+		processor.ConfigureLimits()
 	}
 
-	return output, nil
+	processor.PathDenyList = omitDir
+	processor.Format = "json"
+	processor.IgnoreMinified = true
+
+	processor.ConfigureGc()
+	processor.ConfigureLazy(true)
+	processor.Process()
+
+	data, err := file.ReadContent(processor.FileOutput)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read stats from tmp file: %w", err)
+	}
+
+	err = os.Remove(processor.FileOutput)
+	if err != nil {
+		ui.Infof("failed to remove tmp file: %s", err)
+	}
+
+	ui.Debugf("tmp file removed")
+
+	return data, nil
 }
