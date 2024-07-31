@@ -1,9 +1,9 @@
 package flags
 
 import (
+	"github.com/tecnologer/code-stats/pkg/file"
+	"github.com/tecnologer/code-stats/pkg/models"
 	"github.com/urfave/cli/v2"
-	"tecnologer.net/code-stats/pkg/file"
-	"tecnologer.net/code-stats/pkg/models"
 )
 
 const (
@@ -34,17 +34,19 @@ func NoColor() *cli.BoolFlag {
 
 func OmitDirs() *cli.StringSliceFlag {
 	return &cli.StringSliceFlag{
-		Name:  OmitDirsFlagName,
-		Usage: "directories to omit from the stats collection.",
-		Value: cli.NewStringSlice(".idea", "vendor", ".stats"),
+		Name:    OmitDirsFlagName,
+		Aliases: []string{"o"},
+		Usage:   "directories to omit from the stats collection.",
+		Value:   cli.NewStringSlice(".idea", "vendor", ".stats"),
 	}
 }
 
 func InputPaths() *cli.StringSliceFlag {
 	return &cli.StringSliceFlag{
-		Name:  InputPathsFlagName,
-		Usage: "list path to the input files or directories",
-		Value: cli.NewStringSlice(file.StatsDirectoryPath),
+		Name:    InputPathsFlagName,
+		Aliases: []string{"i"},
+		Usage:   "list path to the input files or directories",
+		Value:   cli.NewStringSlice(file.StatsDirectoryPath),
 	}
 }
 
@@ -59,8 +61,8 @@ func OnlyCompareInput() *cli.BoolFlag {
 func DrawChart() *cli.BoolFlag {
 	return &cli.BoolFlag{
 		Name:    DrawChartFlagName,
-		Usage:   "draw chart",
 		Aliases: []string{"d"},
+		Usage:   "draw chart",
 	}
 }
 
@@ -77,7 +79,7 @@ func StatName() *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:    StatNameFlagName,
 		Usage:   "name of the stat, accepted values: " + models.AllStatTypesString(),
-		Aliases: []string{"n"},
+		Aliases: []string{"s"},
 		Value:   "code",
 	}
 }

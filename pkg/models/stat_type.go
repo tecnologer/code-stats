@@ -12,7 +12,7 @@ const (
 	StatTypeComment            StatType = "comment"
 	StatTypeBlank              StatType = "blank"
 	StatTypeComplexity         StatType = "complexity"
-	StatTypeCount              StatType = "count"
+	StatTypeCountFiles         StatType = "count_files"
 	StatTypeWeightedComplexity StatType = "weighted_complexity"
 )
 
@@ -33,7 +33,7 @@ func (s StatType) IsValid() bool {
 		StatTypeComment,
 		StatTypeBlank,
 		StatTypeComplexity,
-		StatTypeCount,
+		StatTypeCountFiles,
 		StatTypeWeightedComplexity:
 		return true
 	}
@@ -50,7 +50,7 @@ func AllStatsTypes() []StatType {
 		StatTypeComment,
 		StatTypeBlank,
 		StatTypeComplexity,
-		StatTypeCount,
+		StatTypeCountFiles,
 		StatTypeWeightedComplexity,
 	}
 }

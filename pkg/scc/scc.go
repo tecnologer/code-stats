@@ -6,8 +6,8 @@ import (
 	"path"
 
 	"github.com/boyter/scc/processor"
-	"tecnologer.net/code-stats/pkg/file"
-	"tecnologer.net/code-stats/ui"
+	"github.com/tecnologer/code-stats/pkg/file"
+	"github.com/tecnologer/code-stats/ui"
 )
 
 func Process(omitDir ...string) ([]byte, error) {

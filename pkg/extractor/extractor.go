@@ -9,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"tecnologer.net/code-stats/pkg/file"
-	"tecnologer.net/code-stats/pkg/models"
-	"tecnologer.net/code-stats/pkg/scc"
+	"github.com/tecnologer/code-stats/pkg/file"
+	"github.com/tecnologer/code-stats/pkg/models"
+	"github.com/tecnologer/code-stats/pkg/scc"
 )
 
 func ExtractFromInput(paths []string) (*models.StatsCollection, error) {

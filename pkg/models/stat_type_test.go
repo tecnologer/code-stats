@@ -20,7 +20,7 @@ func TestStatTypeIsValid(t *testing.T) {
 		{StatTypeComment, true},
 		{StatTypeBlank, true},
 		{StatTypeComplexity, true},
-		{StatTypeCount, true},
+		{StatTypeCountFiles, true},
 		{StatTypeWeightedComplexity, true},
 		{StatTypeFromString("unknown"), false},
 		{StatTypeFromString("another_invalid"), false},
@@ -49,7 +49,7 @@ func TestStatTypeString(t *testing.T) {
 		{StatTypeComment, "comment"},
 		{StatTypeBlank, "blank"},
 		{StatTypeComplexity, "complexity"},
-		{StatTypeCount, "count"},
+		{StatTypeCountFiles, "count_files"},
 		{StatTypeWeightedComplexity, "weighted_complexity"},
 	}
 

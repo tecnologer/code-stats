@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"tecnologer.net/code-stats/cmd/cli"
-	"tecnologer.net/code-stats/cmd/vers"
-	"tecnologer.net/code-stats/ui"
+	"github.com/tecnologer/code-stats/cmd/cli"
+	"github.com/tecnologer/code-stats/cmd/vers"
+	"github.com/tecnologer/code-stats/ui"
 )
 
 var version string

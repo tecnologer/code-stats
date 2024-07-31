@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tecnologer/code-stats/pkg/models"
+	"github.com/tecnologer/code-stats/ui"
 	"github.com/wcharczuk/go-chart/v2"
-	"tecnologer.net/code-stats/pkg/models"
-	"tecnologer.net/code-stats/ui"
 )
 
 func Draw(stats *models.StatsCollection, statType models.StatType, languages ...string) error {

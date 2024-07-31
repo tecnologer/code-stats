@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
+	"github.com/tecnologer/code-stats/cmd/flags"
+	"github.com/tecnologer/code-stats/pkg/chart"
+	"github.com/tecnologer/code-stats/pkg/extractor"
+	"github.com/tecnologer/code-stats/pkg/models"
+	"github.com/tecnologer/code-stats/ui"
 	"github.com/urfave/cli/v2"
-	"tecnologer.net/code-stats/cmd/flags"
-	"tecnologer.net/code-stats/pkg/chart"
-	"tecnologer.net/code-stats/pkg/extractor"
-	"tecnologer.net/code-stats/pkg/models"
-	"tecnologer.net/code-stats/ui"
 )
 
 type CLI struct {
@@ -26,12 +26,13 @@ func NewCLI(versionValue string) *CLI {
 
 func (c *CLI) setupApp(versionValue string) {
 	c.App = &cli.App{
-		Name:        "code-stats",
-		Version:     versionValue,
-		Usage:       "Collects the code statistics of a given directory, and could compare with the previous stats.",
-		Description: "Code Stats is a tool that collects the code statistics of a given directory, and could compare with the previous stats.",
-		Action:      c.run,
-		Before:      c.beforeRun,
+		Name:    "code-stats",
+		Version: versionValue,
+		Usage:   "Collects the code statistics of a given directory, and could draw a chart to compare with the previous stats.",
+		Description: "Code Stats is a tool that collects the code statistics of a given directory, and could compare with the previous stats. \n" +
+			"Understand as  code statistics the number of lines, files, complexity, and other metrics of the codebase. \n",
+		Action: c.run,
+		Before: c.beforeRun,
 		Flags: []cli.Flag{
 			flags.Verbose(),
 			flags.NoEmojis(),
@@ -81,9 +82,15 @@ func (c *CLI) run(ctx *cli.Context) error {
 }
 
 func (c *CLI) extractData(ctx *cli.Context) (*models.StatsCollection, error) {
-	stats, err := extractor.ExtractFromInput(ctx.StringSlice(flags.InputPathsFlagName))
-	if err != nil {
-		return nil, fmt.Errorf("failed to extract data from inputs: %w", err)
+	stats := models.NewCollection()
+
+	if ctx.Bool(flags.DrawChartFlagName) {
+		inputStats, err := extractor.ExtractFromInput(ctx.StringSlice(flags.InputPathsFlagName))
+		if err != nil {
+			return nil, fmt.Errorf("failed to extract data from inputs: %w", err)
+		}
+
+		stats.Merge(inputStats)
 	}
 
 	if !ctx.Bool(flags.OnlyCompareInputFlagName) {
@@ -92,11 +99,7 @@ func (c *CLI) extractData(ctx *cli.Context) (*models.StatsCollection, error) {
 			return nil, fmt.Errorf("failed to extract current stats: %w", err)
 		}
 
-		if stats != nil {
-			stats.Merge(currentStats)
-		} else {
-			stats = currentStats
-		}
+		stats.Merge(currentStats)
 	}
 
 	ui.Infof("stats collected successfully")

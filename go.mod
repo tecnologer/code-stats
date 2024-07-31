@@ -1,4 +1,4 @@
-module tecnologer.net/code-stats
+module github.com/tecnologer/code-stats
 
 go 1.22
 
