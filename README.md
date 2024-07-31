@@ -24,3 +24,21 @@ Collects the code statistics of a given directory, and could compare with the pr
    --help, -h                                                   show help
    --version, -v                                                print the version
 ```
+
+## Examples
+
+- Collect the code stats of the current directory and store it in `.stats` directory.
+  ```shell
+  code-stats
+  ```
+  
+- Compare the previous code stats of the current directory stored in `.stats` directory and draw a chart for `go` and `java` languages.
+  ```shell
+  code-stats --draw-chart --languages go,java --only-compare-input
+  ```
+
+### Chart output
+
+![chart](example.png)
+
+

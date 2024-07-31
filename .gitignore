@@ -1,5 +1,5 @@
 .stats/
-*.png
+*_stats.png
 .idea/
 .aider*
 coverage.out
