@@ -3,16 +3,8 @@ package models
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"regexp"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
-)
-
-var (
-	uniqueKeyRegex = regexp.MustCompile(`(?m)(.+)\((\d+)\)$`)
 )
 
 type StatsCollection struct {
@@ -89,29 +81,4 @@ func (c *StatsCollection) Get(key time.Time) []*Stats {
 	defer c.m.Unlock()
 
 	return c.data[key]
-}
-
-func (c *StatsCollection) calculateNewKey(key string) string {
-	index := 1
-	prefix := key
-
-	if uniqueKeyRegex.MatchString(key) {
-		prefix = strings.TrimSpace(uniqueKeyRegex.FindStringSubmatch(key)[1])
-		indexRaw := uniqueKeyRegex.FindStringSubmatch(key)[2]
-
-		currentIndex, err := strconv.Atoi(indexRaw)
-		if err != nil {
-			log.Println("failed to parse index from key:", key)
-		}
-
-		index = currentIndex + 1
-	}
-
-	return fmt.Sprintf("%s (%d)", prefix, index)
-}
-
-func (c *StatsCollection) containsKey(key time.Time) bool {
-	_, ok := c.data[key]
-
-	return ok
 }

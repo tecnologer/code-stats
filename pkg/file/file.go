@@ -5,6 +5,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
+)
+
+const (
+	DefaultDirPermissions  = 0o0755 // rwxr-xr-x
+	DefaultFilePermissions = 0o0644 // rw-r--r--
+	StatsDirectoryPath     = ".stats"
 )
 
 func ListFilesFromDir(dir string) []string {
@@ -23,7 +30,6 @@ func ListFilesFromDir(dir string) []string {
 
 		return nil
 	})
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,4 +49,32 @@ func ReadContent(filePath string) ([]byte, error) {
 	}
 
 	return fileContent, nil
+}
+
+func Write(content []byte) error {
+	err := CreateStatsFolderIfNotExists(StatsDirectoryPath)
+	if err != nil {
+		return fmt.Errorf("failed to create stats folder: %w", err)
+	}
+
+	fileName := fmt.Sprintf("%s/%s.json", StatsDirectoryPath, time.Now().UTC().Format("200601021_150405"))
+
+	err = os.WriteFile(fileName, content, DefaultFilePermissions)
+	if err != nil {
+		return fmt.Errorf("failed to write file %s: %w", fileName, err)
+	}
+
+	return nil
+}
+
+func CreateStatsFolderIfNotExists(dirPath string) error {
+	_, err := os.Stat(dirPath)
+	if os.IsNotExist(err) {
+		err = os.Mkdir(dirPath, DefaultDirPermissions)
+		if err != nil {
+			return fmt.Errorf("failed to create stats folder: %w", err)
+		}
+	}
+
+	return nil
 }

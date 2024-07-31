@@ -3,24 +3,16 @@ linters:
   enable-all: true
   disable:
     - bodyclose         # this should all be handled by httpclient, but linter isn't smart enough to detect - enable case-by-case later?
-    - deadcode          # deprecated
     - depguard          # annoying - must maintain a constant whitelist of import-able packages
+    - err113            # annoying - no dynamic errors, forces named errors or wrapping errors
+    - execinquery       # deprecated
     - exhaustruct       # annoying - forces full struct initializations
-    - exhaustivestruct  # annoying - forces full struct initializations
     - godot             # annoying - ending all comments with periods
-    - goerr113          # annoying - no dynamic errors, forces named errors or wrapping errors - annoying
-    - golint            # replaced by stylecheck
     - gomnd             # deprecated
-    - ifshort           # deprecated
-    - interfacer        # deprecated
-    - maligned          # deprecated
     - mnd               # annoying - magic numbers more annoying to alert on than deal with
-    - nosnakecase       # deprecated
-    - scopelint         # deprecated
-    - structcheck       # deprecated
     - tagalign          # forces you to use the tool to do non-standard alignment
     - tagliatelle       # annoying - enforces "no snake case" in JSON tags on things we don't control
-    - varcheck          # deprecated
+    - ireturn
 linters-settings:
   forbidigo:
     forbid:
@@ -36,4 +28,4 @@ linters-settings:
       G302: "0644"
       G306: "0644"
   perfsprint:
-    errorf: false       # annoying - forces errors.New() when no format strings in fmt.Errorf call
+    errorf: false

@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/wcharczuk/go-chart/v2"
-	"tecnologer.net/code-stats/models"
+	"tecnologer.net/code-stats/pkg/models"
+	"tecnologer.net/code-stats/ui"
 )
 
 func Draw(stats *models.StatsCollection, statType models.StatType, languages ...string) error {
@@ -52,14 +53,19 @@ func Draw(stats *models.StatsCollection, statType models.StatType, languages ...
 		chart.Legend(&graph),
 	}
 
-	f, err := os.Create(time.Now().UTC().Format(time.DateOnly) + "_stats.png")
+	graphFile, err := os.Create(time.Now().UTC().Format(time.DateOnly) + "_stats.png")
 	if err != nil {
 		return fmt.Errorf("failed to create image file: %w", err)
 	}
 
-	defer f.Close()
+	defer func(graphFile *os.File) {
+		err := graphFile.Close()
+		if err != nil {
+			ui.Errorf("failed to close image file: %v", err)
+		}
+	}(graphFile)
 
-	err = graph.Render(chart.PNG, f)
+	err = graph.Render(chart.PNG, graphFile)
 	if err != nil {
 		return fmt.Errorf("failed to render chart: %w", err)
 	}

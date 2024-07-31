@@ -5,7 +5,6 @@ import "strings"
 type StatType string
 
 const (
-	StatTypeUnknown            StatType = ""
 	StatTypeBytes              StatType = "bytes"
 	StatTypeCodeBytes          StatType = "code_bytes"
 	StatTypeLines              StatType = "lines"
@@ -27,7 +26,15 @@ func (s StatType) String() string {
 
 func (s StatType) IsValid() bool {
 	switch s {
-	case StatTypeBytes, StatTypeCodeBytes, StatTypeLines, StatTypeCode, StatTypeComment, StatTypeBlank, StatTypeComplexity, StatTypeCount, StatTypeWeightedComplexity:
+	case StatTypeBytes,
+		StatTypeCodeBytes,
+		StatTypeLines,
+		StatTypeCode,
+		StatTypeComment,
+		StatTypeBlank,
+		StatTypeComplexity,
+		StatTypeCount,
+		StatTypeWeightedComplexity:
 		return true
 	}
 

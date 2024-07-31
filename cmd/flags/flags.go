@@ -2,52 +2,63 @@ package flags
 
 import (
 	"github.com/urfave/cli/v2"
-	"tecnologer.net/code-stats/models"
+	"tecnologer.net/code-stats/pkg/file"
+	"tecnologer.net/code-stats/pkg/models"
+)
+
+const (
+	VerboseFlagName          = "verbose"
+	OmitDirsFlagName         = "omit-dir"
+	InputPathsFlagName       = "input"
+	OnlyCompareInputFlagName = "only-compare-input"
+	DrawChartFlagName        = "draw-chart"
+	LanguagesFlagName        = "languages"
+	StatNameFlagName         = "stat-name"
+	NoEmojisFlagName         = "no-emoji"
+	NoColorFlagName          = "no-color"
 )
 
 func Verbose() *cli.BoolFlag {
 	return &cli.BoolFlag{
-		Name:  "verbose",
+		Name:  VerboseFlagName,
 		Usage: "enable verbose output.",
+	}
+}
+
+func NoColor() *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name:  NoColorFlagName,
+		Usage: "disable color output.",
 	}
 }
 
 func OmitDirs() *cli.StringSliceFlag {
 	return &cli.StringSliceFlag{
-		Name:        "omit-dir",
-		Usage:       "directories to omit from the stats collection.",
-		DefaultText: ".idea,vendor,.stats",
+		Name:  OmitDirsFlagName,
+		Usage: "directories to omit from the stats collection.",
+		Value: cli.NewStringSlice(".idea", "vendor", ".stats"),
 	}
 }
 
-/*inputFilePaths   = flag.String("input", ".stats", "Path to the input file, separated by commas, could be used with stdin")
-imitDir          = flag.String("omit-dir", ".idea,vendor,.stats", "Directories to omit from the stats")
-onlyCompareInput = flag.Bool("only-compare-input", false, "Only compare the input files, do not calculate the current stats")
-drawChart        = flag.Bool("draw-chart", false, "Draw chart")
-languages        = flag.String("languages", "", "Languages to include in the chart, require at least one and --draw-chart")
-statName         = flag.String("stat-name", "code", "Name of the stat, accepted values: "+models.AllStatTypesString())
-showVersion      = flag.Bool("version", false, "Show version")
-*/
-
 func InputPaths() *cli.StringSliceFlag {
 	return &cli.StringSliceFlag{
-		Name:        "input",
-		Usage:       "list path to the input files or directories",
-		DefaultText: ".stats",
+		Name:  InputPathsFlagName,
+		Usage: "list path to the input files or directories",
+		Value: cli.NewStringSlice(file.StatsDirectoryPath),
 	}
 }
 
 func OnlyCompareInput() *cli.BoolFlag {
 	return &cli.BoolFlag{
-		Name:    "only-compare-input",
-		Aliases: []string{"oc"},
+		Name:    OnlyCompareInputFlagName,
+		Aliases: []string{"c"},
 		Usage:   "only compare the input files, do not calculate the current stats",
 	}
 }
 
 func DrawChart() *cli.BoolFlag {
 	return &cli.BoolFlag{
-		Name:    "draw-chart",
+		Name:    DrawChartFlagName,
 		Usage:   "draw chart",
 		Aliases: []string{"d"},
 	}
@@ -55,34 +66,25 @@ func DrawChart() *cli.BoolFlag {
 
 func Languages() *cli.StringSliceFlag {
 	return &cli.StringSliceFlag{
-		Name:        "languages",
-		Usage:       "languages to include in the chart, require at least one if --draw-chart is set",
-		Aliases:     []string{"l"},
-		DefaultText: "go",
+		Name:    LanguagesFlagName,
+		Usage:   "languages to include in the chart, require at least one if --draw-chart is set",
+		Aliases: []string{"l"},
+		Value:   cli.NewStringSlice("go"),
 	}
 }
 
 func StatName() *cli.StringFlag {
 	return &cli.StringFlag{
-		Name:        "stat-name",
-		Usage:       "name of the stat, accepted values: " + models.AllStatTypesString(),
-		Aliases:     []string{"n"},
-		DefaultText: "code",
+		Name:    StatNameFlagName,
+		Usage:   "name of the stat, accepted values: " + models.AllStatTypesString(),
+		Aliases: []string{"n"},
+		Value:   "code",
 	}
 }
 
-func Collect() []cli.Flag {
-	return []cli.Flag{
-		OmitDirs(),
-	}
-}
-
-func Compare() []cli.Flag {
-	return []cli.Flag{
-		InputPaths(),
-		OnlyCompareInput(),
-		DrawChart(),
-		Languages(),
-		StatName(),
+func NoEmojis() *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name:  NoEmojisFlagName,
+		Usage: "disable emojis in the output.",
 	}
 }
