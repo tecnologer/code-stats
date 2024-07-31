@@ -40,7 +40,11 @@ func readJSONContentFromFiles(paths []string) (*models.StatsCollection, error) {
 	stats := models.NewCollection()
 
 	for _, filePath := range paths {
-		stat, _ := os.Stat(filePath)
+		stat, err := os.Stat(filePath)
+		if os.IsNotExist(err) {
+			return nil, fmt.Errorf("path %s does not exist", filePath)
+		}
+
 		if stat.IsDir() {
 			dirFilePaths := file.ListFilesFromDir(filePath)
 			filePaths = append(filePaths, dirFilePaths...)
