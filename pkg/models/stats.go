@@ -19,7 +19,7 @@ type Stats struct {
 
 type Files struct{}
 
-func (s *Stats) ValueOf(statType StatType) int64 {
+func (s *Stats) ValueOf(statType StatType) int64 { //nolint:cyclop
 	switch statType {
 	case StatTypeBytes:
 		return s.Bytes
