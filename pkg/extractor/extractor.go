@@ -12,6 +12,7 @@ import (
 	"github.com/tecnologer/code-stats/pkg/file"
 	"github.com/tecnologer/code-stats/pkg/models"
 	"github.com/tecnologer/code-stats/pkg/scc"
+	"github.com/tecnologer/code-stats/ui"
 )
 
 func ExtractFromInput(paths []string) (*models.StatsCollection, error) {
@@ -116,7 +117,7 @@ func ExtractCurrent(omitDirs []string) (*models.StatsCollection, error) {
 		log.Fatal(err)
 	}
 
-	key := time.Now().UTC()
+	key := time.Now()
 	stats := map[time.Time][]*models.Stats{
 		key: statsData,
 	}
@@ -133,6 +134,11 @@ func ExtractCurrent(omitDirs []string) (*models.StatsCollection, error) {
 
 	collection := models.NewCollection()
 	collection.Add(key, statsData)
+
+	err = file.AddStatsDirToGitIgnore()
+	if err != nil {
+		ui.Infof("failed to add stats directory to .gitignore: %v", err)
+	}
 
 	return collection, nil
 }

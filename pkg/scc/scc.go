@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strconv"
+	"time"
 
 	"github.com/boyter/scc/processor"
 	"github.com/tecnologer/code-stats/pkg/file"
@@ -11,7 +13,7 @@ import (
 )
 
 func Process(omitDir ...string) ([]byte, error) {
-	processor.FileOutput = path.Join(os.TempDir(), "updated_stats.json")
+	processor.FileOutput = path.Join(os.TempDir(), strconv.FormatInt(time.Now().UTC().UnixNano(), 10)+"_updated_stats.json")
 
 	processor.DirFilePaths = []string{}
 	if processor.ConfigureLimits != nil {
