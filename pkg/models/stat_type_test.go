@@ -42,15 +42,15 @@ func TestStatTypeString(t *testing.T) {
 		statType StatType
 		expected string
 	}{
-		{StatTypeBytes, "bytes"},
-		{StatTypeCodeBytes, "code_bytes"},
-		{StatTypeLines, "lines"},
-		{StatTypeCode, "code"},
-		{StatTypeComment, "comment"},
-		{StatTypeBlank, "blank"},
-		{StatTypeComplexity, "complexity"},
-		{StatTypeCountFiles, "count_files"},
-		{StatTypeWeightedComplexity, "weighted_complexity"},
+		{StatTypeBytes, "Bytes"},
+		{StatTypeCodeBytes, "Code Bytes"},
+		{StatTypeLines, "Lines"},
+		{StatTypeCode, "Code"},
+		{StatTypeComment, "Comment"},
+		{StatTypeBlank, "Blank"},
+		{StatTypeComplexity, "Complexity"},
+		{StatTypeCountFiles, "Count Files"},
+		{StatTypeWeightedComplexity, "Weighted Complexity"},
 	}
 
 	for _, test := range tests {

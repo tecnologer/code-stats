@@ -1,6 +1,11 @@
 package models
 
-import "strings"
+import (
+	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+)
 
 type StatType string
 
@@ -21,7 +26,10 @@ func StatTypeFromString(s string) StatType {
 }
 
 func (s StatType) String() string {
-	return string(s)
+	str := strings.ReplaceAll(string(s), "_", " ")
+	str = cases.Title(language.English).String(str)
+
+	return str
 }
 
 func (s StatType) IsValid() bool {
