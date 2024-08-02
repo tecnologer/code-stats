@@ -7,6 +7,7 @@ import (
 	"github.com/tecnologer/code-stats/cmd/flags"
 	"github.com/tecnologer/code-stats/pkg/chart"
 	"github.com/tecnologer/code-stats/pkg/extractor"
+	"github.com/tecnologer/code-stats/pkg/file"
 	"github.com/tecnologer/code-stats/pkg/models"
 	"github.com/tecnologer/code-stats/ui"
 	"github.com/urfave/cli/v2"
@@ -85,6 +86,11 @@ func (c *CLI) extractData(ctx *cli.Context) (*models.StatsCollection, error) {
 	stats := models.NewCollection()
 
 	if ctx.Bool(flags.DrawChartFlagName) {
+		err := c.couldDrawChart(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("the chart could not be drawn: %w", err)
+		}
+
 		inputStats, err := extractor.ExtractFromInput(ctx.StringSlice(flags.InputPathsFlagName))
 		if err != nil {
 			return nil, fmt.Errorf("failed to extract data from inputs: %w", err)
@@ -121,6 +127,26 @@ func (c *CLI) drawChart(stats *models.StatsCollection, ctx *cli.Context) error {
 	}
 
 	ui.Successf("chart generated successfully")
+
+	return nil
+}
+
+func (c *CLI) couldDrawChart(ctx *cli.Context) error {
+	inputPath := ctx.StringSlice(flags.InputPathsFlagName)
+
+	if len(inputPath) == 0 {
+		return fmt.Errorf("no input paths provided")
+	}
+
+	for _, p := range inputPath {
+		if p == "" {
+			return fmt.Errorf("empty input path provided")
+		}
+
+		if p == file.StatsDirectoryPath && !file.IsPathExists(p) && len(inputPath) == 1 {
+			return fmt.Errorf("there is no data to compare")
+		}
+	}
 
 	return nil
 }
