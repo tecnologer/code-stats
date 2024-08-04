@@ -22,11 +22,15 @@ const (
 )
 
 func StatTypeFromString(s string) StatType {
-	return StatType(s)
+	return StatType(strings.ToLower(s))
 }
 
 func (s StatType) String() string {
-	str := strings.ReplaceAll(string(s), "_", " ")
+	return string(s)
+}
+
+func (s StatType) Title() string {
+	str := strings.ReplaceAll(s.String(), "_", " ")
 	str = cases.Title(language.English).String(str)
 
 	return str

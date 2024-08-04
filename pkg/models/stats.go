@@ -1,19 +1,24 @@
 package models
 
+import (
+	"slices"
+	"strings"
+)
+
 type Stats struct {
-	Name               string `json:"Name,omitempty"`
-	Bytes              int64  `json:"Bytes,omitempty"`
-	CodeBytes          int64  `json:"CodeBytes,omitempty"`
-	Lines              int64  `json:"Lines,omitempty"`
-	Code               int64  `json:"Code,omitempty"`
-	Comment            int64  `json:"Comment,omitempty"`
-	Blank              int64  `json:"Blank,omitempty"`
-	Complexity         int64  `json:"Complexity,omitempty"`
-	Count              int64  `json:"Count,omitempty"`
-	WeightedComplexity int64  `json:"WeightedComplexity,omitempty"`
+	Name               string  `json:"Name,omitempty"`
+	Bytes              float64 `json:"Bytes,omitempty"`
+	CodeBytes          float64 `json:"CodeBytes,omitempty"`
+	Lines              float64 `json:"Lines,omitempty"`
+	Code               float64 `json:"Code,omitempty"`
+	Comment            float64 `json:"Comment,omitempty"`
+	Blank              float64 `json:"Blank,omitempty"`
+	Complexity         float64 `json:"Complexity,omitempty"`
+	Count              float64 `json:"Count,omitempty"`
+	WeightedComplexity float64 `json:"WeightedComplexity,omitempty"`
 }
 
-func (s *Stats) ValueOf(statType StatType) int64 { //nolint:cyclop
+func (s *Stats) ValueOf(statType StatType) float64 { //nolint:cyclop
 	switch statType {
 	case StatTypeBytes:
 		return s.Bytes
@@ -36,4 +41,12 @@ func (s *Stats) ValueOf(statType StatType) int64 { //nolint:cyclop
 	default:
 		return 0
 	}
+}
+
+func (s *Stats) IsInLanguageList(list []string) bool {
+	return slices.ContainsFunc(list, s.EqualsName)
+}
+
+func (s *Stats) EqualsName(name string) bool {
+	return strings.EqualFold(s.Name, name)
 }

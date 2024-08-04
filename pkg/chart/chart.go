@@ -2,47 +2,61 @@ package chart
 
 import (
 	"fmt"
-	"github.com/wcharczuk/go-chart/v2/drawing"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/tecnologer/code-stats/pkg/models"
 	"github.com/tecnologer/code-stats/ui"
 	"github.com/wcharczuk/go-chart/v2"
+	"github.com/wcharczuk/go-chart/v2/drawing"
 )
 
+const dateFormat = "Jan-02-2006"
+
 func Draw(stats *models.StatsCollection, statType models.StatType, languages ...string) error {
+
 	graph := chart.Chart{
+		Title: getTitle(stats, statType),
+		TitleStyle: chart.Style{
+			FontSize: 14,
+		},
 		XAxis: chart.XAxis{
 			Name:           "Date",
-			ValueFormatter: chart.TimeDateValueFormatter,
+			ValueFormatter: chart.TimeValueFormatterWithFormat(dateFormat),
 		},
 		YAxis: chart.YAxis{
-			Name: fmt.Sprintf("%s Count", statType),
+			Name: fmt.Sprintf("%s Count", statType.Title()),
 		},
-		Series: []chart.Series{},
+		Series: make([]chart.Series, 0, 1),
+		Background: chart.Style{
+			Padding: chart.Box{
+				Top:    80,
+				Left:   80,
+				Right:  20,
+				Bottom: 20,
+			},
+		},
 	}
 
-	series := map[string]*AnnotatedTimeSeries{}
+	series := map[string]*TimeSeries{}
 
-	for _, key := range stats.Keys() {
+	for _, key := range stats.KeysSorted() {
 		languageStats := stats.Get(key)
 
 		for _, stat := range languageStats {
-			if !isInLanguageList(stat.Name, languages) {
+			if !stat.IsInLanguageList(languages) {
 				continue
 			}
 
 			serie, ok := series[stat.Name]
 			if ok {
 				serie.XValues = append(serie.XValues, key)
-				serie.YValues = append(serie.YValues, float64(stat.ValueOf(statType)))
+				serie.YValues = append(serie.YValues, stat.ValueOf(statType))
 
 				continue
 			}
 
-			serie = createSeriePerLanguage(languageStats, statType, stat.Name)
+			serie = createSeriePerLanguage(stat, statType, stat.Name)
 			serie.XValues = []time.Time{key}
 			series[stat.Name] = serie
 		}
@@ -53,7 +67,7 @@ func Draw(stats *models.StatsCollection, statType models.StatType, languages ...
 	}
 
 	graph.Elements = []chart.Renderable{
-		LegendLeft(&graph),
+		legendLeft(&graph),
 	}
 
 	err := drawFile(&graph)
@@ -85,77 +99,28 @@ func drawFile(graph *chart.Chart) error {
 	return nil
 }
 
-func isInLanguageList(language string, list []string) bool {
-	if len(list) == 0 {
-		return true
-	}
-
-	for _, l := range list {
-		if strings.EqualFold(l, language) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func createSeriePerLanguage(stats []*models.Stats, statType models.StatType, language string) *AnnotatedTimeSeries {
-	serie := &AnnotatedTimeSeries{
+func createSeriePerLanguage(stat *models.Stats, statType models.StatType, language string) *TimeSeries {
+	serie := &TimeSeries{
 		TimeSeries: chart.TimeSeries{
-			Name:    language,
-			YValues: []float64{},
+			Name: language,
+			YValues: []float64{
+				stat.ValueOf(statType),
+			},
 			Style: chart.Style{
-				DotWidth: 2.8,
+				DotWidth:          2.8,
+				TextVerticalAlign: chart.TextVerticalAlignTop,
+				StrokeWidth:       2,
 			},
 		},
-	}
-
-	for _, st := range stats {
-		if strings.EqualFold(st.Name, language) {
-			serie.YValues = append(serie.YValues, float64(st.ValueOf(statType)))
-			break
-		}
 	}
 
 	return serie
 }
 
-type AnnotatedTimeSeries struct {
-	chart.TimeSeries
-}
-
-// Render renders the series to the chart.
-func (ats AnnotatedTimeSeries) Render(r chart.Renderer, canvasBox chart.Box, xrange, yrange chart.Range, defaults chart.Style) {
-	// First, render the line as usual
-	ats.TimeSeries.Render(r, canvasBox, xrange, yrange, defaults)
-
-	// Now, render annotations for each point
-	style := ats.Style.InheritFrom(defaults)
-	r.SetFont(style.GetFont())
-	r.SetFontColor(style.GetFontColor())
-
-	for index, x := range ats.XValues {
-		// Convert the x and y values to their corresponding points on the canvas
-		xvValue := xrange.Translate(float64(x.Unix()))
-		yValue := yrange.Translate(ats.YValues[index])
-
-		// Format the label text
-		label := fmt.Sprintf("%.2f", ats.YValues[index])
-
-		// Calculate text width and height (simple approximation)
-		// Calculate text width and height using MeasureText
-		textDimensions := r.MeasureText(label)
-
-		// Draw the text slightly above and to the right of the point
-		textX := canvasBox.Left + xvValue - textDimensions.Width()/2
-		textY := canvasBox.Top + yValue - textDimensions.Height() - 5 // 5 pixels above the point
-
-		r.Text(label, textX, textY)
-	}
-}
-
-// LegendLeft is a legend that is designed for longer series lists.
-func LegendLeft(currentChart *chart.Chart, userDefaults ...chart.Style) chart.Renderable {
+// legendLeft is a legend that is designed for longer series lists.
+//
+// It will render the legend to the left of the chart, with the series names
+func legendLeft(currentChart *chart.Chart, userDefaults ...chart.Style) chart.Renderable {
 	return func(render chart.Renderer, _ chart.Box, chartDefaults chart.Style) {
 		legendDefaults := chart.Style{
 			FillColor:   drawing.ColorWhite,
@@ -175,7 +140,7 @@ func LegendLeft(currentChart *chart.Chart, userDefaults ...chart.Style) chart.Re
 		// DEFAULTS
 		legendPadding := chart.Box{
 			Top:    5,
-			Left:   -10,
+			Left:   5,
 			Right:  5,
 			Bottom: 5,
 		}
@@ -198,7 +163,7 @@ func LegendLeft(currentChart *chart.Chart, userDefaults ...chart.Style) chart.Re
 
 		legend := chart.Box{
 			Top:  5,
-			Left: 5,
+			Left: 10,
 			// bottom and right will be sized by the legend content + relevant padding.
 		}
 
@@ -285,4 +250,15 @@ func styleDefaultsSeries(c *chart.Chart, seriesIndex int) chart.Style {
 		Font:        c.GetFont(),
 		FontSize:    chart.DefaultFontSize,
 	}
+}
+
+func getTitle(stats *models.StatsCollection, statType models.StatType) string {
+	first := stats.FirstKey()
+	last := stats.LastKey()
+
+	if first.Format(time.DateOnly) == last.Format(time.DateOnly) {
+		return fmt.Sprintf("%s per Language on %s", statType.Title(), first.Format(time.DateOnly))
+	}
+
+	return fmt.Sprintf("%s per Language from %s to %s", statType.Title(), first.Format(dateFormat), last.Format(dateFormat))
 }

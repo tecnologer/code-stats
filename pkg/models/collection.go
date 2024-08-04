@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 )
@@ -44,11 +45,42 @@ func (c *StatsCollection) MarshalJSON() ([]byte, error) {
 	return data, nil
 }
 
-func (c *StatsCollection) Keys() []time.Time {
+func (c *StatsCollection) KeysCount() int {
 	c.m.Lock()
 	defer c.m.Unlock()
 
+	return len(c.keys)
+}
+
+func (c *StatsCollection) KeysSorted() []time.Time {
+	c.m.Lock()
+	defer c.m.Unlock()
+
+	if len(c.keys) == 0 {
+		return nil
+	}
+
+	sort.Slice(c.keys, func(i, j int) bool {
+		return c.keys[i].Before(c.keys[j])
+	})
+
 	return c.keys
+}
+
+func (c *StatsCollection) FirstKey() time.Time {
+	if c.Len() == 0 {
+		return time.Time{}
+	}
+
+	return c.KeysSorted()[0]
+}
+
+func (c *StatsCollection) LastKey() time.Time {
+	if c.KeysCount() == 0 {
+		return time.Time{}
+	}
+
+	return c.KeysSorted()[c.KeysCount()-1]
 }
 
 func (c *StatsCollection) Len() int {
