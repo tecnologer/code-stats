@@ -14,29 +14,7 @@ import (
 const dateFormat = "Jan-02-2006"
 
 func Draw(stats *models.StatsCollection, statType models.StatType, languages ...string) error {
-
-	graph := chart.Chart{
-		Title: getTitle(stats, statType),
-		TitleStyle: chart.Style{
-			FontSize: 14,
-		},
-		XAxis: chart.XAxis{
-			Name:           "Date",
-			ValueFormatter: chart.TimeValueFormatterWithFormat(dateFormat),
-		},
-		YAxis: chart.YAxis{
-			Name: fmt.Sprintf("%s Count", statType.Title()),
-		},
-		Series: make([]chart.Series, 0, 1),
-		Background: chart.Style{
-			Padding: chart.Box{
-				Top:    80,
-				Left:   80,
-				Right:  20,
-				Bottom: 20,
-			},
-		},
-	}
+	graph := newChart(stats, statType)
 
 	series := map[string]*TimeSeries{}
 
@@ -76,6 +54,31 @@ func Draw(stats *models.StatsCollection, statType models.StatType, languages ...
 	}
 
 	return nil
+}
+
+func newChart(stats *models.StatsCollection, statType models.StatType) chart.Chart {
+	return chart.Chart{
+		Title: getTitle(stats, statType),
+		TitleStyle: chart.Style{
+			FontSize: 14,
+		},
+		XAxis: chart.XAxis{
+			Name:           "Date",
+			ValueFormatter: chart.TimeValueFormatterWithFormat(dateFormat),
+		},
+		YAxis: chart.YAxis{
+			Name: fmt.Sprintf("%s Count", statType.Title()),
+		},
+		Series: make([]chart.Series, 0, 1),
+		Background: chart.Style{
+			Padding: chart.Box{
+				Top:    80,
+				Left:   80,
+				Right:  20,
+				Bottom: 20,
+			},
+		},
+	}
 }
 
 func drawFile(graph *chart.Chart) error {

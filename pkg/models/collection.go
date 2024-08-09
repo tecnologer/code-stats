@@ -95,13 +95,6 @@ func (c *StatsCollection) Merge(other *StatsCollection) {
 		return
 	}
 
-	if c.Len() == 0 {
-		c.data = other.data
-		c.keys = other.keys
-
-		return
-	}
-
 	for key, stats := range other.data {
 		c.Add(key, stats)
 	}

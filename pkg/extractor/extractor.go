@@ -57,6 +57,8 @@ func readJSONContentFromFiles(paths []string) (*models.StatsCollection, error) {
 	}
 
 	for _, filePath := range filePaths {
+		ui.Debugf("reading content from file %s", filePath)
+
 		jsonContent, err := file.ReadContent(filePath)
 		if err != nil {
 			return nil, fmt.Errorf("failed to read content from file %s: %w", filePath, err)
