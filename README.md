@@ -65,14 +65,25 @@
    --draw-chart, -d                                             draw chart (default: false)
    --languages value, -l value [ --languages value, -l value ]  languages to include in the chart, require at least one if --draw-chart is set (default: "go")
    --stat-name value, -s value                                  name of the stat, accepted values: bytes, code_bytes, lines, code, comment, blank, complexity, count_files, weighted_complexity (default: "code")
+   --diff, --df                                                 instead of displaying th stats, it calculates the difference between the current and the previous one. (default: false)
    --help, -h                                                   show help
    --version, -v                                                print the version
 ```
 
 ### Chart output
 
-Below is an example chart showing the development progress of a project in Go and Makefile:
+Below is a screenshot of the [example.html](./examples/example.html) chart showing the development progress of a project in Go and Makefile:
+```shell
+code-stats -d -c -l go,makefile
+```
 
-![chart](example.png)
+![chart](./examples/example.png)
+
+It supports now calculates the difference between the current and the previous stats ([example-diff.html](./examples/example-diff.html)), and it can draw a chart to visualize the progress.
+```shell
+code-stats -d -c -l go,makefile --diff
+```
+
+![chart-diff](./examples/example-diff.png)
 
 

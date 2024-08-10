@@ -16,6 +16,7 @@ const (
 	StatNameFlagName         = "stat-name"
 	NoEmojisFlagName         = "no-emoji"
 	NoColorFlagName          = "no-color"
+	CalculateDiffFlagName    = "diff"
 )
 
 func Verbose() *cli.BoolFlag {
@@ -88,5 +89,13 @@ func NoEmojis() *cli.BoolFlag {
 	return &cli.BoolFlag{
 		Name:  NoEmojisFlagName,
 		Usage: "disable emojis in the output.",
+	}
+}
+
+func Diff() *cli.BoolFlag {
+	return &cli.BoolFlag{
+		Name:    CalculateDiffFlagName,
+		Aliases: []string{"df"},
+		Usage:   "instead of displaying th stats, it calculates the difference between the current and the previous one.",
 	}
 }

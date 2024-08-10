@@ -13,7 +13,7 @@ import (
 
 const dateFormat = "Jan-02-2006"
 
-func Draw(stats *models.StatsCollection, statType models.StatType, languages ...string) error {
+func Draw(stats *models.StatsCollection, statType models.StatType, isDiff bool, languages ...string) error {
 	graph := newChart(stats, statType)
 
 	series := map[string]*TimeSeries{}

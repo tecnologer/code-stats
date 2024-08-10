@@ -28,6 +28,8 @@ func ExtractFromInput(paths []string) (*models.StatsCollection, error) {
 
 	dataFromFiles.Merge(fromStdIn)
 
+	ui.Successf("stats extracted from files successfully")
+
 	return dataFromFiles, nil
 }
 

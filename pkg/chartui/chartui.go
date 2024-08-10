@@ -9,7 +9,7 @@ import (
 	"unsafe"
 )
 
-func Draw(stats *models.StatsCollection, statType models.StatType, languages ...string) error {
+func Draw(stats *models.StatsCollection, statType models.StatType, isDiff bool, languages ...string) error {
 	if err := ui.Init(); err != nil {
 		return fmt.Errorf("failed to initialize termui: %w", err)
 	}

@@ -44,6 +44,7 @@ func (c *CLI) setupApp(versionValue string) {
 			flags.DrawChart(),
 			flags.Languages(),
 			flags.StatName(),
+			flags.Diff(),
 		},
 		EnableBashCompletion: true,
 	}
@@ -105,10 +106,10 @@ func (c *CLI) extractData(ctx *cli.Context) (*models.StatsCollection, error) {
 			return nil, fmt.Errorf("failed to extract current stats: %w", err)
 		}
 
+		ui.Successf("current stats calculated successfully")
+
 		stats.Merge(currentStats)
 	}
-
-	ui.Infof("stats collected successfully")
 
 	return stats, nil
 }
@@ -121,7 +122,12 @@ func (c *CLI) drawChart(stats *models.StatsCollection, ctx *cli.Context) error {
 		return fmt.Errorf("invalid stat name: %s. The valid stat names are: %s", statName, models.AllStatTypesString())
 	}
 
-	err := charthtml.Draw(stats, statType, ctx.StringSlice(flags.LanguagesFlagName)...)
+	calculateDiff := ctx.Bool(flags.CalculateDiffFlagName)
+	if calculateDiff {
+		ui.Infof("drawing chart with diff")
+	}
+
+	err := charthtml.Draw(stats, statType, calculateDiff, ctx.StringSlice(flags.LanguagesFlagName)...)
 	if err != nil {
 		return fmt.Errorf("failed to draw chart: %w", err)
 	}

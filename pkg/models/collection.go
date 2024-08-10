@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 )
@@ -120,4 +121,53 @@ func (c *StatsCollection) Get(key time.Time) []*Stats {
 	defer c.m.Unlock()
 
 	return c.data[key]
+}
+
+func (c *StatsCollection) DiffPrevious(currentKey time.Time, language string, statType StatType) float64 {
+	if c.Len() == 0 || c.Len() == 1 {
+		return 0
+	}
+
+	previousKey := c.previousKey(currentKey)
+	if previousKey.IsZero() {
+		return 0
+	}
+
+	currentStats := float64(0)
+	for _, s := range c.Get(currentKey) {
+		if !strings.EqualFold(s.Name, language) {
+			continue
+		}
+
+		currentStats += s.ValueOf(statType)
+	}
+
+	previousStats := float64(0)
+	for _, s := range c.Get(previousKey) {
+		if !strings.EqualFold(s.Name, language) {
+			continue
+		}
+
+		previousStats += s.ValueOf(statType)
+	}
+
+	return currentStats - previousStats
+}
+
+func (c *StatsCollection) previousKey(currentKey time.Time) time.Time {
+	if c.Len() == 0 || c.Len() == 1 {
+		return time.Time{}
+	}
+
+	for i, key := range c.KeysSorted() {
+		if key.Equal(currentKey) {
+			if i == 0 {
+				return time.Time{}
+			}
+
+			return c.KeysSorted()[i-1]
+		}
+	}
+
+	return time.Time{}
 }
