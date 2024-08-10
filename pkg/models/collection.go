@@ -30,6 +30,11 @@ func (c *StatsCollection) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("failed to unmarshal stats collection data: %w", err)
 	}
 
+	c.keys = make([]time.Time, 0, len(c.data))
+	for key, _ := range c.data {
+		c.keys = append(c.keys, key)
+	}
+
 	return nil
 }
 
@@ -103,6 +108,8 @@ func (c *StatsCollection) Merge(other *StatsCollection) {
 func (c *StatsCollection) Add(key time.Time, stats []*Stats) {
 	c.m.Lock()
 	defer c.m.Unlock()
+
+	key = time.Date(key.Year(), key.Month(), key.Day(), 0, 0, 0, 0, key.Location())
 
 	c.data[key] = stats
 	c.keys = append(c.keys, key)

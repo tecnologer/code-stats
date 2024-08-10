@@ -2,10 +2,10 @@ package cli
 
 import (
 	"fmt"
+	"github.com/tecnologer/code-stats/pkg/charthtml"
 
 	"github.com/fatih/color"
 	"github.com/tecnologer/code-stats/cmd/flags"
-	"github.com/tecnologer/code-stats/pkg/chart"
 	"github.com/tecnologer/code-stats/pkg/extractor"
 	"github.com/tecnologer/code-stats/pkg/file"
 	"github.com/tecnologer/code-stats/pkg/models"
@@ -121,7 +121,7 @@ func (c *CLI) drawChart(stats *models.StatsCollection, ctx *cli.Context) error {
 		return fmt.Errorf("invalid stat name: %s. The valid stat names are: %s", statName, models.AllStatTypesString())
 	}
 
-	err := chart.Draw(stats, statType, ctx.StringSlice(flags.LanguagesFlagName)...)
+	err := charthtml.Draw(stats, statType, ctx.StringSlice(flags.LanguagesFlagName)...)
 	if err != nil {
 		return fmt.Errorf("failed to draw chart: %w", err)
 	}

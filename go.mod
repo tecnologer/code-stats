@@ -6,6 +6,7 @@ require (
 	github.com/boyter/scc v2.12.0+incompatible
 	github.com/fatih/color v1.17.0
 	github.com/gizak/termui/v3 v3.1.0
+	github.com/go-echarts/go-echarts/v2 v2.4.1
 	github.com/stretchr/testify v1.9.0
 	github.com/urfave/cli/v2 v2.27.3
 	github.com/wcharczuk/go-chart/v2 v2.1.1
@@ -18,6 +19,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dbaggerman/cuba v0.3.2 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/kr/text v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.2 // indirect
