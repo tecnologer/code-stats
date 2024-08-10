@@ -74,14 +74,14 @@
 
 Below is a screenshot of the [example.html](./examples/example.html) chart showing the development progress of a project in Go and Makefile:
 ```shell
-code-stats -d -c -l go,makefile
+code-stats  --draw-chart  --only-compare-input --languages go,makefile
 ```
 
 ![chart](./examples/example.png)
 
 It supports now calculates the difference between the current and the previous stats ([example-diff.html](./examples/example-diff.html)), and it can draw a chart to visualize the progress.
 ```shell
-code-stats -d -c -l go,makefile --diff
+code-stats  --draw-chart --only-compare-input --languages go,makefile --diff
 ```
 
 ![chart-diff](./examples/example-diff.png)

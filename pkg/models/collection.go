@@ -32,7 +32,7 @@ func (c *StatsCollection) UnmarshalJSON(data []byte) error {
 	}
 
 	c.keys = make([]time.Time, 0, len(c.data))
-	for key, _ := range c.data {
+	for key := range c.data {
 		c.keys = append(c.keys, key)
 	}
 
@@ -133,25 +133,27 @@ func (c *StatsCollection) DiffPrevious(currentKey time.Time, language string, st
 		return 0
 	}
 
-	currentStats := float64(0)
-	for _, s := range c.Get(currentKey) {
-		if !strings.EqualFold(s.Name, language) {
+	currentStatsValue := float64(0)
+
+	for _, currentStats := range c.Get(currentKey) {
+		if !strings.EqualFold(currentStats.Name, language) {
 			continue
 		}
 
-		currentStats += s.ValueOf(statType)
+		currentStatsValue += currentStats.ValueOf(statType)
 	}
 
-	previousStats := float64(0)
-	for _, s := range c.Get(previousKey) {
-		if !strings.EqualFold(s.Name, language) {
+	previousStatsValue := float64(0)
+
+	for _, previousStats := range c.Get(previousKey) {
+		if !strings.EqualFold(previousStats.Name, language) {
 			continue
 		}
 
-		previousStats += s.ValueOf(statType)
+		previousStatsValue += previousStats.ValueOf(statType)
 	}
 
-	return currentStats - previousStats
+	return currentStatsValue - previousStatsValue
 }
 
 func (c *StatsCollection) previousKey(currentKey time.Time) time.Time {
@@ -159,13 +161,13 @@ func (c *StatsCollection) previousKey(currentKey time.Time) time.Time {
 		return time.Time{}
 	}
 
-	for i, key := range c.KeysSorted() {
+	for count, key := range c.KeysSorted() {
 		if key.Equal(currentKey) {
-			if i == 0 {
+			if count == 0 {
 				return time.Time{}
 			}
 
-			return c.KeysSorted()[i-1]
+			return c.KeysSorted()[count-1]
 		}
 	}
 

@@ -20,15 +20,14 @@ func Draw(collection *models.StatsCollection, statType models.StatType, isDiff b
 	// set some global options like Title/Legend/ToolTip or anything else
 	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
 		Title:    getTitle(statType, isDiff),
-		Subtitle: getSubtitle(collection, statType),
+		Subtitle: getSubtitle(collection),
 	}))
 
 	xAxis := make([]string, 0)
 	data := make(map[string][]opts.LineData)
-	symbols := []string{"circle", "triangle", "diamond", "rect", "roundRect", "pin", "arrow"}
-	symbolsForLanguage := make(map[string]string)
+	symbols := NewSymbol()
 
-	for i, key := range collection.KeysSorted() {
+	for _, key := range collection.KeysSorted() {
 		hasDateDate := false
 
 		for _, stats := range collection.Get(key) {
@@ -36,19 +35,14 @@ func Draw(collection *models.StatsCollection, statType models.StatType, isDiff b
 				continue
 			}
 
-			symbol, ok := symbolsForLanguage[stats.Name]
-			if !ok {
-				symbolsForLanguage[stats.Name] = symbols[i]
-			}
-
 			if _, ok := data[stats.Name]; !ok {
-				data[stats.Name] = make([]opts.LineData, 0)
+				data[stats.Name] = make([]opts.LineData, 0, 1)
 			}
 
 			data[stats.Name] = append(data[stats.Name], opts.LineData{
 				Name:       stats.Name,
 				Value:      getValueFor(collection, key, stats, statType, isDiff),
-				Symbol:     symbol,
+				Symbol:     symbols.GetFor(stats.Name),
 				SymbolSize: 10,
 			})
 
@@ -82,11 +76,10 @@ func getTitle(statType models.StatType, isDiff bool) string {
 		return fmt.Sprintf("Progress of %s per Language", statType.Title())
 	}
 
-	return fmt.Sprintf("%s per Language", statType.Title())
-
+	return statType.Title() + " per Language"
 }
 
-func getSubtitle(stats *models.StatsCollection, statType models.StatType) string {
+func getSubtitle(stats *models.StatsCollection) string {
 	first := stats.FirstKey()
 	last := stats.LastKey()
 

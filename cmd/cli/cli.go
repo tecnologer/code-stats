@@ -2,10 +2,10 @@ package cli
 
 import (
 	"fmt"
-	"github.com/tecnologer/code-stats/pkg/charthtml"
 
 	"github.com/fatih/color"
 	"github.com/tecnologer/code-stats/cmd/flags"
+	"github.com/tecnologer/code-stats/pkg/charthtml"
 	"github.com/tecnologer/code-stats/pkg/extractor"
 	"github.com/tecnologer/code-stats/pkg/file"
 	"github.com/tecnologer/code-stats/pkg/models"
