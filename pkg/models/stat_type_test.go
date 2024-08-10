@@ -35,7 +35,7 @@ func TestStatTypeIsValid(t *testing.T) {
 	}
 }
 
-func TestStatTypeString(t *testing.T) {
+func TestStatTypeTitle(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -51,6 +51,33 @@ func TestStatTypeString(t *testing.T) {
 		{StatTypeComplexity, "Complexity"},
 		{StatTypeCountFiles, "Count Files"},
 		{StatTypeWeightedComplexity, "Weighted Complexity"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.statType.String(), func(t *testing.T) {
+			t.Parallel()
+
+			assert.Equal(t, test.expected, test.statType.Title())
+		})
+	}
+}
+
+func TestStatTypeString(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		statType StatType
+		expected string
+	}{
+		{StatTypeBytes, "bytes"},
+		{StatTypeCodeBytes, "code_bytes"},
+		{StatTypeLines, "lines"},
+		{StatTypeCode, "code"},
+		{StatTypeComment, "comment"},
+		{StatTypeBlank, "blank"},
+		{StatTypeComplexity, "complexity"},
+		{StatTypeCountFiles, "count_files"},
+		{StatTypeWeightedComplexity, "weighted_complexity"},
 	}
 
 	for _, test := range tests {
