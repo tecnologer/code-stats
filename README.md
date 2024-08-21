@@ -5,8 +5,12 @@
 ## Features
 
 - **Code Statistics:** Automatically gathers and saves detailed code statistics.
-- **Progress Visualization:** Generates charts to visually track codebase changes over time.
+- **Progress Visualization:** Generates charts to track codebase changes over time visually.
 - **Customizable:** Supports multiple programming languages and customizable settings for tailored insights.
+
+## How it works?
+
+First, data is collected using [SCC](https://github.com/boyter/scc) and dumped into a JSON file, with the timestamp as the key. When the user requests a chart, the tool retrieves this data from the specified source directory (default: `.stats/`). It then generates a time series for each selected language based on the statistics and renders a linear chart in HTML format.
 
 ## Getting Started
 
@@ -34,25 +38,24 @@
 
 ## Usage
 
-1. **Display Help:**
-   Run the following command to display the help message:
-   ```shell
-   code-stats --help
-   ```
-   
-2. **Collecting Statistics:**
-   Run the following command to collect and store statistics in the .stats directory:
+1. **Collecting Statistics:** Run `code-stats` to collect the statistics for today. Repeat this step on subsequent days to collect more data.
    ```shell
    code-stats
    ```
 
-3. **Visualizing Progress:**  
-    
-    To compare past statistics and visualize the development progress in a chart:  
+2. **Visualizing Progress:** Once you have enough data, draw the chart using the following command:
     ```shell
     code-stats --draw-chart --languages go,java --only-compare-input
     ```
-  
+    To see the difference between the current day and the previous day, add the `--diff` flag:
+     ```shell
+    code-stats --draw-chart --languages go,java --only-compare-input --diff
+    ```
+3. **Display Help:**: If you want to see more info, use the `--help`.
+   ```shell
+   code-stats --help
+   ```
+     
 ### Command Line Flags
 
 ```text
