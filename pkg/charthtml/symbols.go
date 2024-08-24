@@ -8,7 +8,7 @@ type Symbol struct {
 
 func NewSymbol() *Symbol {
 	return &Symbol{
-		values:            []string{"circle", "triangle", "diamond", "rect", "roundRect", "pin", "arrow"},
+		values:            []string{"diamond", "circle", "triangle", "rect", "roundRect", "pin", "arrow"},
 		assignedSymbols:   make(map[string]string),
 		currentValueIndex: -1,
 	}

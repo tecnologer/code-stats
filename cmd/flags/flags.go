@@ -1,22 +1,26 @@
 package flags
 
 import (
+	"fmt"
+
 	"github.com/tecnologer/code-stats/pkg/file"
 	"github.com/tecnologer/code-stats/pkg/models"
 	"github.com/urfave/cli/v2"
 )
 
 const (
-	VerboseFlagName          = "verbose"
-	OmitDirsFlagName         = "omit-dir"
-	InputPathsFlagName       = "input"
-	OnlyCompareInputFlagName = "only-compare-input"
-	DrawChartFlagName        = "draw-chart"
-	LanguagesFlagName        = "languages"
-	StatNameFlagName         = "stat-name"
-	NoEmojisFlagName         = "no-emoji"
-	NoColorFlagName          = "no-color"
-	CalculateDiffFlagName    = "diff"
+	VerboseFlagName            = "verbose"
+	OmitDirsFlagName           = "omit-dir"
+	InputPathsFlagName         = "input"
+	OnlyCompareInputFlagName   = "only-compare-input"
+	DrawChartFlagName          = "draw-chart"
+	LanguagesFlagName          = "languages"
+	StatNameFlagName           = "stat-name"
+	NoEmojisFlagName           = "no-emoji"
+	NoColorFlagName            = "no-color"
+	CalculateDiffFlagName      = "diff"
+	CalculateDiffPivotFlagName = "diff-pivot"
+	OutputChartPathFlagName    = "output-chart"
 )
 
 func Verbose() *cli.BoolFlag {
@@ -35,10 +39,9 @@ func NoColor() *cli.BoolFlag {
 
 func OmitDirs() *cli.StringSliceFlag {
 	return &cli.StringSliceFlag{
-		Name:    OmitDirsFlagName,
-		Aliases: []string{"o"},
-		Usage:   "directories to omit from the stats collection.",
-		Value:   cli.NewStringSlice(".idea", "vendor", ".stats"),
+		Name:  OmitDirsFlagName,
+		Usage: "directories to omit from the stats collection.",
+		Value: cli.NewStringSlice(".idea", "vendor", ".stats"),
 	}
 }
 
@@ -96,6 +99,28 @@ func Diff() *cli.BoolFlag {
 	return &cli.BoolFlag{
 		Name:    CalculateDiffFlagName,
 		Aliases: []string{"df"},
-		Usage:   "instead of displaying th stats, it calculates the difference between the current and the previous one.",
+		Usage:   "instead of displaying the stats, it calculates the difference between the current and the previous one.",
+	}
+}
+
+func DiffPivot() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name:        CalculateDiffPivotFlagName,
+		Aliases:     []string{"dp"},
+		DefaultText: "previous-day",
+		Usage: fmt.Sprintf(
+			"date to calculate the difference from, it could be '%s', '%s', or a date in the format 'YYYY-MM-DD' (the date should exists in the data).",
+			models.PreviousDayPivot,
+			models.FirstDatePivot,
+		),
+	}
+}
+
+func OutputChartPath() *cli.StringFlag {
+	return &cli.StringFlag{
+		Name:        OutputChartPathFlagName,
+		Aliases:     []string{"o"},
+		Usage:       "path to save the chart",
+		DefaultText: "YYYY-MM-DD_stats.html",
 	}
 }

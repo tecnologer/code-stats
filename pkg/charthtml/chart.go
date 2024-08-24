@@ -3,6 +3,7 @@ package charthtml
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
@@ -13,25 +14,34 @@ import (
 
 const dateFormat = "Jan-02-2006"
 
-func Draw(collection *models.StatsCollection, statType models.StatType, isDiff bool, languages ...string) error {
+type DrawOptions struct {
+	StatType        models.StatType
+	DiffPivot       time.Time
+	Languages       []string
+	Collection      *models.StatsCollection
+	DiffType        models.DifferenceType
+	OutputChartPath string
+}
+
+func Draw(dOpts *DrawOptions) error {
 	// create a new bar instance
 	bar := charts.NewLine()
 
 	// set some global options like Title/Legend/ToolTip or anything else
 	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
-		Title:    getTitle(statType, isDiff),
-		Subtitle: getSubtitle(collection),
+		Title:    getTitle(dOpts),
+		Subtitle: getSubtitle(dOpts),
 	}))
 
 	xAxis := make([]string, 0)
 	data := make(map[string][]opts.LineData)
 	symbols := NewSymbol()
 
-	for _, key := range collection.KeysSorted() {
+	for _, key := range dOpts.Collection.KeysSorted() {
 		hasDateDate := false
 
-		for _, stats := range collection.Get(key) {
-			if !stats.IsInLanguageList(languages) {
+		for _, stats := range dOpts.Collection.Get(key) {
+			if !stats.IsInLanguageList(dOpts.Languages) {
 				continue
 			}
 
@@ -41,7 +51,7 @@ func Draw(collection *models.StatsCollection, statType models.StatType, isDiff b
 
 			data[stats.Name] = append(data[stats.Name], opts.LineData{
 				Name:       stats.Name,
-				Value:      getValueFor(collection, key, stats, statType, isDiff),
+				Value:      getValueFor(dOpts, key, stats),
 				Symbol:     symbols.GetFor(stats.Name),
 				SymbolSize: 10,
 			})
@@ -63,7 +73,7 @@ func Draw(collection *models.StatsCollection, statType models.StatType, isDiff b
 	// Put data into instance
 	bar.SetXAxis(xAxis)
 
-	err := drawFile(bar)
+	err := drawFile(bar, dOpts.OutputChartPath)
 	if err != nil {
 		return fmt.Errorf("failed to save chart to file: %w", err)
 	}
@@ -71,27 +81,52 @@ func Draw(collection *models.StatsCollection, statType models.StatType, isDiff b
 	return nil
 }
 
-func getTitle(statType models.StatType, isDiff bool) string {
-	if isDiff {
-		return fmt.Sprintf("Progress of %s per Language", statType.Title())
+func getTitle(dOpts *DrawOptions) string {
+	if dOpts.DiffType != models.DiffNone {
+		return fmt.Sprintf("Progress of %s per Language", dOpts.StatType.Title())
 	}
 
-	return statType.Title() + " per Language"
+	return dOpts.StatType.Title() + " per Language"
 }
 
-func getSubtitle(stats *models.StatsCollection) string {
-	first := stats.FirstKey()
-	last := stats.LastKey()
+func getSubtitle(dOpts *DrawOptions) string {
+	first := dOpts.Collection.FirstKey()
+	last := dOpts.Collection.LastKey()
+
+	var subtitle string
+
+	if dOpts.DiffType != models.DiffNone {
+		const differenceSubtitleFmt = "difference calculated against %s, "
+
+		switch {
+		case dOpts.DiffType == models.DiffPreviousDate:
+			subtitle = fmt.Sprintf(differenceSubtitleFmt, dOpts.DiffType)
+		case dOpts.DiffType == models.DiffFirstDate:
+			subtitle = fmt.Sprintf(differenceSubtitleFmt, first.Format(dateFormat)+" (first date)")
+		default:
+			subtitle = fmt.Sprintf(differenceSubtitleFmt, dOpts.DiffPivot.Format(dateFormat))
+		}
+	}
 
 	if first.Format(time.DateOnly) == last.Format(time.DateOnly) {
-		return "at the date " + first.Format(time.DateOnly)
+		subtitle += "at the date " + first.Format(time.DateOnly)
+	} else {
+		subtitle += fmt.Sprintf("from %s to %s", first.Format(dateFormat), last.Format(dateFormat))
 	}
 
-	return fmt.Sprintf("from %s to %s", first.Format(dateFormat), last.Format(dateFormat))
+	return subtitle
 }
 
-func drawFile(graph *charts.Line) error {
-	graphFile, err := os.Create(time.Now().UTC().Format(time.DateOnly) + "_stats.html")
+func drawFile(graph *charts.Line, outputChartPath string) error {
+	if outputChartPath == "" {
+		outputChartPath = time.Now().UTC().Format(time.DateOnly) + "_stats.html"
+	}
+
+	if !strings.HasSuffix(outputChartPath, ".html") {
+		outputChartPath += ".html"
+	}
+
+	graphFile, err := os.Create(outputChartPath)
 	if err != nil {
 		return fmt.Errorf("failed to create image file: %w", err)
 	}
@@ -111,10 +146,10 @@ func drawFile(graph *charts.Line) error {
 	return nil
 }
 
-func getValueFor(collection *models.StatsCollection, currentKey time.Time, stats *models.Stats, statType models.StatType, isDiff bool) float64 {
-	if isDiff {
-		return collection.DiffPrevious(currentKey, stats.Name, statType)
+func getValueFor(dOpts *DrawOptions, currentKey time.Time, stats *models.Stats) float64 {
+	if dOpts.DiffType != models.DiffNone {
+		return dOpts.Collection.DiffPrevious(currentKey, stats.Name, dOpts.StatType, dOpts.DiffPivot)
 	}
 
-	return stats.ValueOf(statType)
+	return stats.ValueOf(dOpts.StatType)
 }

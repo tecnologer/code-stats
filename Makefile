@@ -17,12 +17,38 @@ install: build
 	go install
 	@printf '\033[32m\033[1m%s\033[0m\n' ":: Install complete"
 
-build:
+build: prepare
 	go build -ldflags "-X 'main.version=v$(NEXT_VERSION)'" -o "code-stats" main.go
 	@printf '\033[32m\033[1m%s\033[0m\n' ":: Build complete"
 
+# prepare the code, running the necessary tools before building it
+prepare: install-tools
+	go generate ./...
+
+# Install required tools, if not already installed
+install-tools: check-gobin
+	@$(SHELL) -c 'binpath=$${GOPATH:-$$HOME/go}/bin; \
+		if ! [ -x "$$binpath/enumer" ]; then \
+				echo -e "\033[1;33m!! enumer not found in $$binpath. installing it...\033[0m"; \
+				go install github.com/dmarkham/enumer@latest; \
+				echo -e "\033[0;32m:: enumer installed\033[0m"; \
+			else \
+				echo -e "\033[0;32m:: enumer is installed\033[0m"; \
+		fi'
+
+# Check if go/bin is in PATH, if not add it
+check-gobin:
+	@$(SHELL) -c 'binpath=$${GOPATH:-$$HOME/go}/bin; \
+		if ! echo $$PATH | grep -q $$binpath; then \
+				echo -e "\033[1;33m!! $$binpath is NOT in PATH. Adding it to your PATH.\033[0m"; \
+				export PATH="$$GOPATH/bin:$$PATH"; \
+			else \
+				echo -e "\033[0;32m:: go/bin is in PATH\033[0m"; \
+		fi'
+
+
 lint:
-	golangci-lint run --go 1.22.5 ./...
+	golangci-lint run --go 1.23.0 --config .golangci.yml ./...
 
 release:
 	echo "Current branch: $(CURRENT_BRANCH)"

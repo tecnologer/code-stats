@@ -13,6 +13,7 @@ linters:
     - tagalign          # forces you to use the tool to do non-standard alignment
     - tagliatelle       # annoying - enforces "no snake case" in JSON tags on things we don't control
     - ireturn
+    - exportloopref
 linters-settings:
   forbidigo:
     forbid:

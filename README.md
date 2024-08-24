@@ -1,6 +1,12 @@
 # Code Stats
 
-**Code Stats** is a command-line tool designed to track and visualize the development progress of coding projects. It collects statistics on code in a specified directory and displays changes over time through generated charts.
+Code Stats is a tool that leverages SCC to gather code statistics from a specified directory, allowing you to compare these stats over time and visualize your progress with charts.
+
+- Use the `--diff` flag to compare the current stats with those from the previous day, the first day, or a specific date.
+- The `--diff-pivot` flag allows you to specify the date to compare the stats with. By default, this is set to the 'previous-day' (the last day with recorded data, not necessarily yesterday).
+  - You can also use the value `first-date` to compare with the first recorded date in the dataset.
+  - Dates should be provided in the format 'YYYY-MM-DD'.
+
 
 ## Features
 
@@ -62,13 +68,15 @@ First, data is collected using [SCC](https://github.com/boyter/scc) and dumped i
    --verbose                                                    enable verbose output. (default: false)
    --no-emoji                                                   disable emojis in the output. (default: false)
    --no-color                                                   disable color output. (default: false)
-   --omit-dir value, -o value [ --omit-dir value, -o value ]    directories to omit from the stats collection. (default: ".idea", "vendor", ".stats")
+   --omit-dir value [ --omit-dir value ]                        directories to omit from the stats collection. (default: ".idea", "vendor", ".stats")
    --input value, -i value [ --input value, -i value ]          list path to the input files or directories (default: ".stats")
    --only-compare-input, -c                                     only compare the input files, do not calculate the current stats (default: false)
    --draw-chart, -d                                             draw chart (default: false)
    --languages value, -l value [ --languages value, -l value ]  languages to include in the chart, require at least one if --draw-chart is set (default: "go")
    --stat-name value, -s value                                  name of the stat, accepted values: bytes, code_bytes, lines, code, comment, blank, complexity, count_files, weighted_complexity (default: "code")
-   --diff, --df                                                 instead of displaying th stats, it calculates the difference between the current and the previous one. (default: false)
+   --diff, --df                                                 instead of displaying the stats, it calculates the difference between the current and the previous one. (default: false)
+   --diff-pivot value, --dp value                               date to calculate the difference from, it could be 'previous-day', 'first-date', or a date in the format 'YYYY-MM-DD' (the date should exists in the data). (default: previous-day)
+   --output-chart value, -o value                               path to save the chart (default: YYYY-MM-DD_stats.html)
    --help, -h                                                   show help
    --version, -v                                                print the version
 ```
@@ -89,4 +97,9 @@ code-stats  --draw-chart --only-compare-input --languages go,makefile --diff
 
 ![chart-diff](./examples/example-diff.png)
 
+It also supports the `--diff-pivot` flag to compare the stats with a specific date, for example, the first recorded date in the dataset ([example-diff-pivot.html](./examples/example-diff-pivot.html)).
+```shell
+code-stats  --draw-chart --only-compare-input --languages go,makefile --diff --diff-pivot first-date
+```
 
+![chart-diff-pivot](./examples/example-diff-pivot.png)

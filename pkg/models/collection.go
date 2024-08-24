@@ -123,14 +123,17 @@ func (c *StatsCollection) Get(key time.Time) []*Stats {
 	return c.data[key]
 }
 
-func (c *StatsCollection) DiffPrevious(currentKey time.Time, language string, statType StatType) float64 {
-	if c.Len() == 0 || c.Len() == 1 {
+func (c *StatsCollection) DiffPrevious(currentKey time.Time, language string, statType StatType, pivot time.Time) float64 {
+	if c.Len() == 0 || c.Len() == 1 || currentKey == pivot {
 		return 0
 	}
 
-	previousKey := c.previousKey(currentKey)
-	if previousKey.IsZero() {
-		return 0
+	previousKey := pivot
+	if pivot.IsZero() {
+		previousKey = c.previousKey(currentKey)
+		if previousKey.IsZero() {
+			return 0
+		}
 	}
 
 	currentStatsValue := float64(0)
