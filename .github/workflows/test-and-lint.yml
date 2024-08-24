@@ -15,6 +15,14 @@ jobs:
           go-version: '>=1.22.2'
           cache: true
 
+      - name: Install enumer
+        run: |
+          go install github.com/dmarkham/enumer@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: Generate code
+        run: go generate ./...
+
       - name: Build code-stats
         run: go build -v ./main.go
 
