@@ -1,0 +1,43 @@
+name: Code Generation
+on:
+  workflow_call:
+    inputs:
+      goVersion:
+        required: true
+        type: string
+
+jobs:
+  install-and-generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.goVersion }}
+          cache: true
+
+      - name: Install tools
+        run: |
+          echo "Installing enumer"
+          go install github.com/dmarkham/enumer@latest
+          
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+          
+          export PATH=$PATH:$HOME/go/bin
+          echo "Current PATH: $PATH"
+          
+          if [ -x "enumer" ]; then
+            echo "Enumer installed successfully."
+          else
+            echo "Enumer installation failed."
+            exit 1
+          end
+
+      - name: Generate code
+        run: |
+          echo "Running go generate"
+          go generate -v ./...
+          echo "Go Generate completed"

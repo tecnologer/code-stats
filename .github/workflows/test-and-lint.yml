@@ -2,6 +2,11 @@
 name: Run tests, coverage and lint with golangci-lint
 on: [push]
 jobs:
+  call-prepare-env:
+    uses: ./.github/workflows/prepare-env.yaml
+    with:
+      goVersion: '1.22.2'
+
   test-and-lint:
     runs-on: ubuntu-latest
 
@@ -14,17 +19,6 @@ jobs:
         with:
           go-version: '>=1.22.2'
           cache: true
-
-      - name: Install tools
-        run: |
-          echo "Installing enumer"
-          go install github.com/dmarkham/enumer@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH
-
-      - name: Generate code
-        run: |
-          echo "Running go generate"
-          go generate ./...
 
       - name: Build code-stats
         run: go build -v ./main.go
