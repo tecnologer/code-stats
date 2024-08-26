@@ -13,6 +13,7 @@ jobs:
       goVersion: '1.22.2'
 
   release:
+    needs: call-prepare-env
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo

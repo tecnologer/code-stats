@@ -26,15 +26,7 @@ jobs:
           
           echo "$HOME/go/bin" >> $GITHUB_PATH
           
-          export PATH=$PATH:$HOME/go/bin
-          echo "Current PATH: $PATH"
-          
-          if [ -x "enumer" ]; then
-            echo "Enumer installed successfully."
-          else
-            echo "Enumer installation failed."
-            exit 1
-          end
+          export PATH=$PATH:$HOME/go/bin          
 
       - name: Generate code
         run: |

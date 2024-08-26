@@ -8,6 +8,7 @@ jobs:
       goVersion: '1.22.2'
 
   test-and-lint:
+    needs: call-prepare-env
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +23,6 @@ jobs:
 
       - name: Build code-stats
         run: go build -v ./main.go
-
 
       - name: Run Tests Coverage
         run: |
