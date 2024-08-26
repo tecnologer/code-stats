@@ -25,6 +25,7 @@ jobs:
           go install github.com/dmarkham/enumer@latest
           echo "$HOME/go/bin" >> $GITHUB_PATH
           ls -la $HOME/go/bin
+          export PATH='$PATH:$HOME/go/bin'
           echo "Current PATH: $PATH"
 
       - name: Generate code
