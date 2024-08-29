@@ -7,29 +7,11 @@ on:
 permissions:
   contents: write
 jobs:
-  call-prepare-env:
-    uses: ./.github/workflows/prepare-env.yaml
-    with:
-      goVersion: '1.22.2'
-
   release:
-    needs: call-prepare-env
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
-
-      - name: Download generated files
-        uses: actions/download-artifact@v4
-        with:
-          name: generated-files
-          path: temp_download
-
-      - name: Move and check files
-        run: |
-          cp -rf temp_download/* .
-          rm -rf temp_download
-          ls -la
 
       - name: Set up Go
         uses: actions/setup-go@v5

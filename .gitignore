@@ -4,4 +4,3 @@
 .idea/
 .aider*
 coverage.out
-*_enumer.go
