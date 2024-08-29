@@ -36,7 +36,7 @@ jobs:
           echo "Go Generate completed"
 
       - name: Archive generated files
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: generated-files
           path: |
