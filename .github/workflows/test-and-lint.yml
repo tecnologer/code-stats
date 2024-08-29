@@ -23,7 +23,8 @@ jobs:
 
       - name: Move and check files
         run: |
-          mv -rf temp_download/* .
+          cp -rf temp_download/* .
+          rm -rf temp_download
           ls -la
 
       - name: Set up Go
