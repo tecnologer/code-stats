@@ -27,7 +27,7 @@ jobs:
 
       - name: Move and check files
         run: |
-          mv temp_download/* .
+          mv -rf temp_download/* .
           ls -la
 
       - name: Set up Go
