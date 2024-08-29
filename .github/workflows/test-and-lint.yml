@@ -19,7 +19,12 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: generated-files
-          path: ${{ needs.call-prepare-env.outputs.workspace-path }}
+          path: temp_download
+
+      - name: Move and check files
+        run: |
+          mv temp_download/* .
+          ls -la
 
       - name: Set up Go
         uses: actions/setup-go@v5
