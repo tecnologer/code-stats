@@ -103,3 +103,7 @@ code-stats  --draw-chart --only-compare-input --languages go,makefile --diff --d
 ```
 
 ![chart-diff-pivot](./examples/example-diff-pivot.png)
+
+### TODO
+
+- [ ] Support different output chart formats (png, pdf, etc).
