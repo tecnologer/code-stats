@@ -34,3 +34,9 @@ jobs:
           go generate -v ./...
           tree | grep _enumer.go
           echo "Go Generate completed"
+
+      - name: Archive generated files
+        uses: actions/upload-artifact@v2
+        with:
+          name: generated-files
+          path: .
