@@ -106,4 +106,5 @@ code-stats  --draw-chart --only-compare-input --languages go,makefile --diff --d
 
 ### TODO
 
+- [ ] Support more languages as plugins, first Spanish and English.
 - [ ] Support different output chart formats (png, pdf, etc).
